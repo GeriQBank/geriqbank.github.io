@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import { issues } from '../../lib/content.js';
+import { url } from '../../lib/url.js';
+import { SITE } from '../../site.config.mjs';
+---
+<Base title={SITE.newsletterName} current="newsletter" description={`${SITE.newsletterName}: a free weekly email for MD Geriatrics exam preparation.`}>
+  <section class="page-top">
+    <h1>{SITE.newsletterName}</h1>
+    <p class="lede">One email every Sunday: a question that keeps coming back, a skeleton to answer it, and one guideline change worth knowing. Free, and about four minutes to read.</p>
+    <div class="actions"><a class="button" href={SITE.newsletterUrl}>Subscribe free</a></div>
+  </section>
+  <section class="block">
+    <h2>Past issues</h2>
+    <ol class="qlist">
+      {issues.map((i) => (
+        <li>
+          <a class="qlink" href={url(`/sunday-rounds/${i.slug}/`)}>
+            <span class="qtext"><span class="qnum">Issue {i.frontmatter.number}.</span> {i.frontmatter.title}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Base>

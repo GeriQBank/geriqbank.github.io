@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import { essays } from '../../lib/content.js';
+import { url } from '../../lib/url.js';
+---
+<Base title="Essays" current="essays" description="Essays on how the MD Geriatrics papers are set and how to answer them.">
+  <section class="page-top">
+    <h1>Essays</h1>
+    <p class="lede">How the papers are set, and how to answer them.</p>
+  </section>
+  {essays.map((e) => (
+    <article style="padding: 18px 0; border-bottom: 1px solid var(--rule)">
+      <h2 style="font-size: 22px"><a href={url(`/essays/${e.slug}/`)} style="color: var(--ink)">{e.frontmatter.title}</a></h2>
+      <p class="muted">{e.frontmatter.description}</p>
+      <a href={url(`/essays/${e.slug}/`)}>Read the essay</a>
+    </article>
+  ))}
+</Base>

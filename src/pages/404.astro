@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+---
+<Base title="Page not found" noindex={true}>
+  <section class="page-top">
+    <h1>This page isn’t here</h1>
+    <p class="lede">The link may be old, or the address may have a typo.</p>
+    <div class="actions">
+      <a class="button" href={url('/questions/')}>Browse the questions</a>
+      <a class="button button-outline" href={url('/search/')}>Search the site</a>
+    </div>
+  </section>
+</Base>

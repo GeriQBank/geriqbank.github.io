@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config.mjs';
+import { url } from '../lib/url.js';
+---
+<Base title="About" current="about" description={`Who writes ${SITE.name}, where the answers come from, and how to report a mistake.`}>
+  <article class="page-top prose" data-pagefind-body>
+    <h1>About {SITE.name}</h1>
+    <p>{SITE.name} is a free revision site for the MD Geriatric Medicine examination. It ranks every Paper III and IV question by how often it has been set, so you can prepare the questions that keep coming back first.</p>
+
+    <h2>Who writes it</h2>
+    <p>{SITE.author}, {SITE.authorRole}. [ONE OR TWO LINES ABOUT YOU.]</p>
+
+    <h2>How the answers are written</h2>
+    <p>Every answer is written in our own words and structured the way the examiner marks it. Standard textbooks, including Pathy’s Principles and Practice of Geriatric Medicine and Kane’s Essentials of Clinical Geriatrics, are recommended as further reading, and current guidelines are named where they matter.</p>
+
+    <h2>How accuracy is checked</h2>
+    <p>Answers are reviewed by {SITE.reviewer}. Each answer shows when it was last reviewed. Guidelines change, so treat this site as revision, not clinical guidance.</p>
+
+    <h2>Found a mistake?</h2>
+    <p>Please <a href={SITE.reportErrorUrl}>report it</a>. Corrections are made as quickly as possible, and people who report errors can be thanked by name if they wish.</p>
+
+    <h2>Free to read</h2>
+    <p>Everything on this site is free. The best way to support it is to share it with the next batch of residents, or to <a href={url('/sunday-rounds/')}>subscribe to {SITE.newsletterName}</a>.</p>
+  </article>
+</Base>

@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import Subscribe from '../../components/Subscribe.astro';
+import { issues } from '../../lib/content.js';
+import { url } from '../../lib/url.js';
+import { SITE } from '../../site.config.mjs';
+
+export function getStaticPaths() {
+  return issues.map((i) => ({ params: { slug: i.slug }, props: { issue: i } }));
+}
+const { issue } = Astro.props;
+const { Content, frontmatter: fm } = issue;
+---
+<Base title={`${SITE.newsletterName} ${fm.number}: ${fm.title}`} current="newsletter" description={fm.title}>
+  <a class="back" href={url('/sunday-rounds/')}>
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 L5 8 L10 13" /></svg>
+    All issues
+  </a>
+  <article data-pagefind-body style="padding-top: 12px">
+    <p class="small muted" style="margin-bottom: 6px">{SITE.newsletterName}, issue {fm.number}</p>
+    <h1>{fm.title}</h1>
+    <div class="prose"><Content /></div>
+  </article>
+  <Subscribe heading="Get the next issue" text="Free, every Sunday. Unsubscribe anytime." />
+</Base>

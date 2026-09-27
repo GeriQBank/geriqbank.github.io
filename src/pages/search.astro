@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+---
+<Base title="Search" current="search" description="Search every question, answer, essay and newsletter issue.">
+  <section class="page-top">
+    <h1>Search</h1>
+    <p class="lede">Search every question, answer, essay and newsletter issue.</p>
+  </section>
+  <link rel="stylesheet" href={url('/pagefind/pagefind-ui.css')} />
+  <div id="search"></div>
+  <noscript><p class="notice">Search needs JavaScript. You can still browse the <a href={url('/questions/')}>question index</a>.</p></noscript>
+  <script is:inline src={url('/pagefind/pagefind-ui.js')}></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (typeof PagefindUI === 'undefined') {
+        document.getElementById('search').innerHTML =
+          '<p class="notice">Search is built when the site is built. Run <code>npm run build</code> and then <code>npm run preview</code> to try it.</p>';
+        return;
+      }
+      var params = new URLSearchParams(location.search);
+      var ui = new PagefindUI({ element: '#search', showSubResults: true, showImages: false });
+      if (params.get('q')) ui.triggerSearch(params.get('q'));
+    });
+  </script>
+</Base>

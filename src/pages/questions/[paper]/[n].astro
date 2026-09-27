@@ -1,0 +1,73 @@
+---
+// One page per question: 355 pages generated from the question bank.
+// If src/content/answers/p3-135.md exists, its answer appears here.
+import Base from '../../../layouts/Base.astro';
+import Tally from '../../../components/Tally.astro';
+import QuestionItem from '../../../components/QuestionItem.astro';
+import Subscribe from '../../../components/Subscribe.astro';
+import data, { PAPERS, paperBySlug, themeName, answerKey } from '../../../lib/qbank.js';
+import { answers } from '../../../lib/content.js';
+import { url } from '../../../lib/url.js';
+import { SITE } from '../../../site.config.mjs';
+
+export function getStaticPaths() {
+  return PAPERS.flatMap((p) =>
+    data[p.key].questions.map((q) => ({ params: { paper: p.slug, n: String(q.n) } })),
+  );
+}
+
+const paper = paperBySlug(Astro.params.paper);
+const q = data[paper.key].questions.find((x) => String(x.n) === Astro.params.n);
+const theme = themeName(paper.key, q.t);
+const answer = answers[answerKey(paper.key, q.n)];
+const Content = answer?.Content;
+const fm = answer?.frontmatter ?? {};
+const related = data[paper.key].questions
+  .filter((x) => x.t === q.t && x.n !== q.n)
+  .sort((a, b) => b.x - a.x || a.n - b.n)
+  .slice(0, 5);
+const heading = fm.title ?? `${paper.label}, question ${q.n}`;
+const description = `${paper.label} question ${q.n} (${q.m}, ${q.x === 1 ? 'asked once' : `asked ${q.x} times`}): ${q.q}`.slice(0, 160);
+---
+<Base title={heading} current="questions" description={description} noindex={!answer}>
+  <a class="back" href={url('/questions/')}>
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 L5 8 L10 13" /></svg>
+    All questions
+  </a>
+
+  <article data-pagefind-body>
+    <p class="small muted" style="margin: 8px 0 6px">{paper.label}, {theme}</p>
+    <h1>{heading}</h1>
+    <div class="sheet" style="margin-bottom: 28px">
+      <div class="sheet-meta"><span>As set in the paper</span><span>{q.m}</span></div>
+      <p class="question-text"><span class="qnum">{q.n}.</span> {q.q}</p>
+      <Tally n={q.x} />
+    </div>
+
+    {Content ? (
+      <div class="prose">
+        <Content />
+        <p class="small muted" style="margin-top: 32px">
+          Last reviewed {fm.lastReviewed ?? '[DATE]'}{fm.reviewedBy ? ` by ${fm.reviewedBy}` : ''}. For exam revision, not clinical guidance.
+          Spotted a mistake? <a href={SITE.reportErrorUrl}>Report it</a>.
+        </p>
+      </div>
+    ) : (
+      <div class="notice">
+        <p><strong>No model answer yet.</strong> New answers are added every week, most-asked questions first.</p>
+        <p>Subscribe to {SITE.newsletterName} to hear when this one is published.</p>
+      </div>
+    )}
+  </article>
+
+  {related.length > 0 && (
+    <section class="block">
+      <h2>More from {theme}</h2>
+      <ol class="qlist">
+        {related.map((r) => <QuestionItem paper={paper.key} q={r} />)}
+      </ol>
+    </section>
+  )}
+
+  <Subscribe />
+</Base>

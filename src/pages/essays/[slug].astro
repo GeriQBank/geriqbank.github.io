@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import Subscribe from '../../components/Subscribe.astro';
+import { essays } from '../../lib/content.js';
+import { url } from '../../lib/url.js';
+import { SITE } from '../../site.config.mjs';
+
+export function getStaticPaths() {
+  return essays.map((e) => ({ params: { slug: e.slug }, props: { essay: e } }));
+}
+const { essay } = Astro.props;
+const { Content, frontmatter: fm } = essay;
+---
+<Base title={fm.title} current="essays" description={fm.description}>
+  <a class="back" href={url('/essays/')}>
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 L5 8 L10 13" /></svg>
+    All essays
+  </a>
+  <article data-pagefind-body style="padding-top: 12px">
+    <h1>{fm.title}</h1>
+    <p class="byline">By {SITE.author}{fm.readingTime ? `, ${fm.readingTime}` : ''}</p>
+    <div class="prose"><Content /></div>
+  </article>
+  <Subscribe />
+</Base>
