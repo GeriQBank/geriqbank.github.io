@@ -1,0 +1,13 @@
+---
+// Red-pen tally marks showing how many times a question has been set.
+import { tally, timesLabel } from '../lib/qbank.js';
+
+const { n, showLabel = true, suffix = '' } = Astro.props;
+const t = tally(n);
+---
+<span class="tally">
+  <svg width={t.width} height="20" viewBox={`0 0 ${t.width} 20`} aria-hidden="true"><path d={t.d} /></svg>
+  {showLabel
+    ? <span class="tally-label">{timesLabel(n)}{suffix}</span>
+    : <span class="sr-only">{timesLabel(n)}</span>}
+</span>

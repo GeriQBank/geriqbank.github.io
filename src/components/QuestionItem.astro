@@ -1,0 +1,22 @@
+---
+// One row in a question list: the question, its tally, its mark format.
+import Tally from './Tally.astro';
+import { url } from '../lib/url.js';
+import { questionPath, answerKey } from '../lib/qbank.js';
+import { answers } from '../lib/content.js';
+
+const { paper, q, ...rest } = Astro.props;
+const ready = Boolean(answers[answerKey(paper, q.n)]);
+---
+<li {...rest}>
+  <a class="qlink" href={url(questionPath(paper, q.n))}>
+    <span class="qtext"><span class="qnum">{q.n}.</span> {q.q}</span>
+    <span class="qrow-meta">
+      <Tally n={q.x} />
+      <span class="qrow-right">
+        {ready && <span class="ready">Answer ready</span>}
+        <span>{q.m}</span>
+      </span>
+    </span>
+  </a>
+</li>
