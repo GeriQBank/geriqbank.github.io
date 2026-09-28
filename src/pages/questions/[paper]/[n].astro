@@ -30,6 +30,10 @@ const heading = fm.title ?? `${paper.label}, question ${q.n}`;
 const facts = [q.m, timesLabel(q.x)].filter(Boolean).join(', ');
 const description = `${paper.label} question ${q.n}${facts ? ` (${facts})` : ''}: ${q.q}`.slice(0, 160);
 const source = paper.key === 'II' ? 'From the Paper II answer bank' : 'As set in the paper';
+const reviewer = fm.reviewedBy ?? SITE.reviewer;
+const reviewed = /^\d{4}-\d{2}-\d{2}$/.test(String(fm.lastReviewed ?? ''))
+  ? `Last reviewed ${fm.lastReviewed} by ${reviewer}.`
+  : `Awaiting review by ${reviewer}.`;
 ---
 <Base title={heading} current="questions" description={description} noindex={!answer}>
   <a class="back" href={url('/questions/')}>
@@ -50,7 +54,7 @@ const source = paper.key === 'II' ? 'From the Paper II answer bank' : 'As set in
       <div class="prose">
         <Content />
         <p class="small muted" style="margin-top: 32px">
-          Last reviewed {fm.lastReviewed ?? '[DATE]'}{fm.reviewedBy ? ` by ${fm.reviewedBy}` : ''}. For exam revision, not clinical guidance.
+          {reviewed} For exam revision, not clinical guidance.
           Spotted a mistake? <a href={SITE.reportErrorUrl}>Report it</a>.
         </p>
       </div>

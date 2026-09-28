@@ -8,10 +8,10 @@ export const SITE = {
     'Free revision for MD Geriatric Medicine: every Paper II, III and IV question, the most-repeated ranked first, with model answers.',
   author: 'Dr Sudarsan G',
   authorRole: 'Chief Editor',
-  reviewer: '[REVIEWER NAME AND ROLE]',
+  reviewer: 'Dr Sudarsan G',
   newsletterName: 'Sunday Rounds',
   // Your newsletter's signup page, for example your Substack address.
   newsletterUrl: 'https://example.com/your-newsletter-signup',
   // Where readers report mistakes: a Google Form link or a mailto: address.
-  reportErrorUrl: 'mailto:you@example.com?subject=Error%20report',
+  reportErrorUrl: 'mailto:sudarsandr36@gmail.com?subject=Silver%20Street%20error%20report',
 };
