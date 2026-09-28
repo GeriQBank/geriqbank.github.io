@@ -40,8 +40,7 @@ as further reading, but don't copy their sentences, tables or figures.
 
 | File | What to change |
 | --- | --- |
-| `src/site.config.mjs` | Site name, your name, reviewer, newsletter link, error-report link |
-| `src/pages/about.astro` | The line about you |
+| `src/site.config.mjs` | Site name, reviewer, newsletter link, error-report link |
 | `src/content/answers/p3-135.md` | Review date and reviewer |
 
 ## Using your own domain later

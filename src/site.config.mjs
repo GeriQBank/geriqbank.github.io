@@ -6,8 +6,8 @@ export const SITE = {
   tagline: 'MD Geriatrics exam questions, ranked by how often they come back.',
   description:
     'Free revision for MD Geriatric Medicine: every Paper II, III and IV question, the most-repeated ranked first, with model answers.',
-  author: '[YOUR NAME]',
-  authorRole: 'MD Geriatric Medicine resident',
+  author: 'Dr Sudarsan G',
+  authorRole: 'Chief Editor',
   reviewer: '[REVIEWER NAME AND ROLE]',
   newsletterName: 'Sunday Rounds',
   // Your newsletter's signup page, for example your Substack address.
