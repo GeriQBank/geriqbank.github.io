@@ -31,9 +31,11 @@ const facts = [q.m, timesLabel(q.x)].filter(Boolean).join(', ');
 const description = `${paper.label} question ${q.n}${facts ? ` (${facts})` : ''}: ${q.q}`.slice(0, 160);
 const source = paper.key === 'II' ? 'From the Paper II answer bank' : 'As set in the paper';
 const reviewer = fm.reviewedBy ?? SITE.reviewer;
-const reviewed = /^\d{4}-\d{2}-\d{2}$/.test(String(fm.lastReviewed ?? ''))
-  ? `Last reviewed ${fm.lastReviewed} by ${reviewer}.`
-  : `Awaiting review by ${reviewer}.`;
+const rawDate = fm.lastReviewed instanceof Date ? fm.lastReviewed.toISOString().slice(0, 10) : String(fm.lastReviewed ?? '');
+const reviewDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+  ? new Date(`${rawDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  : '';
+const reviewed = reviewDate ? `Last reviewed ${reviewDate} by ${reviewer}.` : `Awaiting review by ${reviewer}.`;
 ---
 <Base title={heading} current="questions" description={description} noindex={!answer}>
   <a class="back" href={url('/questions/')}>
