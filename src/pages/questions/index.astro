@@ -1,141 +1,19 @@
 ---
-import Base from '../../layouts/Base.astro';
-import QuestionItem from '../../components/QuestionItem.astro';
-import data, { PAPERS } from '../../lib/qbank.js';
+// The question bank now lives on the home page; this keeps old links working.
+import { url } from '../../lib/url.js';
 
-const themes = Object.fromEntries(PAPERS.map((p) => [p.key, data[p.key].themes]));
-const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
+const target = url('/');
 ---
-<Base
-  title="Question index"
-  current="questions"
-  description={`All ${total} MD Geriatrics Paper II, III and IV questions, with Papers III and IV ranked by how often each has been set.`}
->
-  <section class="page-top">
-    <h1>Question index</h1>
-    <p class="lede">Every Paper II, III and IV question. Papers III and IV are de-duplicated and ranked by how often each question has been set.</p>
-    <p class="small muted stroke-key">
-      <svg width="12" height="20" viewBox="0 0 12 20" aria-hidden="true"><path d="M6 3 L6.5 17" /></svg>
-      Each red stroke is one time the question was set.
-    </p>
-  </section>
-
-  <form class="filters" id="filters" role="search">
-    <fieldset class="wide">
-      <legend>Paper</legend>
-      <div class="segmented" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
-        <input type="radio" name="paper" id="paper-II" value="II" />
-        <label for="paper-II">Paper II</label>
-        <input type="radio" name="paper" id="paper-III" value="III" checked />
-        <label for="paper-III">Paper III</label>
-        <input type="radio" name="paper" id="paper-IV" value="IV" />
-        <label for="paper-IV">Paper IV</label>
-      </div>
-    </fieldset>
-    <div class="wide">
-      <label class="field-label" for="q">Search questions</label>
-      <input class="input" id="q" name="q" type="search" placeholder="Try delirium or falls" autocomplete="off" />
-    </div>
-    <div>
-      <label class="field-label" for="theme">Theme</label>
-      <select class="input" id="theme" name="theme"><option value="all">All themes</option></select>
-    </div>
-    <div>
-      <label class="field-label" for="sort">Sort by</label>
-      <select class="input" id="sort" name="sort">
-        <option value="asked">Most asked</option>
-        <option value="number">Question number</option>
-      </select>
-    </div>
-  </form>
-
-  <p class="notice small" id="paper-note" hidden>Paper II has no complete repeat record yet. Tallies appear where its answer bank notes a repeat, and the rest follow in chapter order.</p>
-
-  <div class="results-head">
-    <p id="count" aria-live="polite">{total} questions</p>
-    <button type="button" class="link-button" id="clear" hidden>Clear filters</button>
-  </div>
-  <ol class="qlist" id="list">
-    {PAPERS.flatMap((p) =>
-      data[p.key].questions.map((q) => (
-        <QuestionItem paper={p.key} q={q} data-paper={p.key} data-theme={q.t} data-x={q.x} data-n={q.n} data-text={q.q.toLowerCase()} />
-      )),
-    )}
-  </ol>
-  <p id="empty" class="notice" hidden>No questions match. Try a shorter word, or clear the filters.</p>
-
-  <script type="application/json" id="themes-data" set:html={JSON.stringify(themes)}></script>
-  <script>
-    const form = document.getElementById('filters');
-    const list = document.getElementById('list');
-    const items = Array.from(list.children);
-    const themes = JSON.parse(document.getElementById('themes-data').textContent);
-    const search = document.getElementById('q');
-    const themeSelect = document.getElementById('theme');
-    const sortSelect = document.getElementById('sort');
-    const count = document.getElementById('count');
-    const clear = document.getElementById('clear');
-    const empty = document.getElementById('empty');
-    const note = document.getElementById('paper-note');
-    let paper = 'III';
-
-    function fillThemes() {
-      themeSelect.replaceChildren(new Option('All themes', 'all'));
-      for (const t of themes[paper]) themeSelect.add(new Option(t.name, String(t.id)));
-    }
-
-    function apply() {
-      const text = search.value.trim().toLowerCase();
-      const theme = themeSelect.value;
-      const byAsked = sortSelect.value === 'asked';
-      const sorted = items.slice().sort((a, b) =>
-        byAsked
-          ? (+b.dataset.x || 0) - (+a.dataset.x || 0) || a.dataset.n - b.dataset.n
-          : a.dataset.n - b.dataset.n,
-      );
-      let shown = 0;
-      for (const li of sorted) {
-        const match =
-          li.dataset.paper === paper &&
-          (theme === 'all' || li.dataset.theme === theme) &&
-          (!text || li.dataset.text.includes(text));
-        li.hidden = !match;
-        if (match) shown++;
-        list.appendChild(li);
-      }
-      const filtered = theme !== 'all' || text !== '';
-      count.textContent = filtered
-        ? `${shown} ${shown === 1 ? 'question' : 'questions'} found`
-        : `${shown} questions in Paper ${paper}`;
-      clear.hidden = !filtered;
-      empty.hidden = shown !== 0;
-      note.hidden = paper !== 'II';
-    }
-
-    form.addEventListener('submit', (e) => e.preventDefault());
-    form.addEventListener('change', (e) => {
-      if (e.target.name === 'paper') {
-        paper = e.target.value;
-        fillThemes();
-      }
-      apply();
-    });
-    search.addEventListener('input', apply);
-    clear.addEventListener('click', () => {
-      search.value = '';
-      themeSelect.value = 'all';
-      apply();
-      search.focus();
-    });
-
-    // Links like /questions/?paper=IV&q=falls open pre-filtered.
-    const params = new URLSearchParams(location.search);
-    if (['II', 'IV'].includes(params.get('paper'))) {
-      paper = params.get('paper');
-      document.getElementById(`paper-${paper}`).checked = true;
-    }
-    if (params.get('q')) search.value = params.get('q');
-    fillThemes();
-    apply();
-  </script>
-</Base>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content={`0; url=${target}`} />
+  <link rel="canonical" href={target} />
+  <title>Question bank</title>
+</head>
+<body>
+  <p>The question bank has moved to the <a href={target}>home page</a>.</p>
+</body>
+</html>

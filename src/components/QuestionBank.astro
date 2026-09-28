@@ -1,0 +1,342 @@
+---
+// The interactive question bank used on the home page: charts of the
+// repeated questions for each paper, then the full searchable list.
+// Tapping a chart bar filters the list below it.
+import QuestionItem from './QuestionItem.astro';
+import Tally from './Tally.astro';
+import data, { PAPERS, questionPath } from '../lib/qbank.js';
+import { url } from '../lib/url.js';
+
+// Exam sessions covered by the Paper III and IV source banks (from their covers).
+const SESSIONS = { III: 19, IV: 20 };
+
+const panels = PAPERS.map((p) => {
+  const qs = data[p.key].questions;
+  const counted = p.key in SESSIONS;
+  const themes = data[p.key].themes
+    .map((t) => {
+      const inTheme = qs.filter((q) => q.t === t.id);
+      const value = counted ? inTheme.reduce((s, q) => s + (q.x || 0), 0) : inTheme.length;
+      return { id: t.id, name: t.name, value };
+    })
+    .sort((a, b) => b.value - a.value || a.id - b.id);
+  const repeated = qs.filter((q) => (q.x || 0) >= 2).sort((a, b) => b.x - a.x || a.n - b.n);
+  const buckets = [
+    { key: '1', label: 'Asked once', count: qs.filter((q) => q.x === 1).length },
+    { key: '2', label: 'Asked twice', count: qs.filter((q) => q.x === 2).length },
+    { key: '3', label: 'Asked 3 times', count: qs.filter((q) => q.x === 3).length },
+    { key: '4', label: 'Asked 4 or more times', count: qs.filter((q) => (q.x || 0) >= 4).length },
+  ];
+  return {
+    ...p,
+    counted,
+    total: qs.length,
+    themes,
+    themeMax: Math.max(1, ...themes.map((t) => t.value)),
+    top: repeated.slice(0, 10),
+    repeated: repeated.length,
+    slots: qs.reduce((s, q) => s + (q.x || 0), 0),
+    repeatSlots: repeated.reduce((s, q) => s + q.x, 0),
+    buckets,
+    bucketMax: Math.max(1, ...buckets.map((b) => b.count)),
+    sessions: SESSIONS[p.key],
+  };
+});
+const width = (value, max) => `width: ${Math.max(2, Math.round((value / max) * 100))}%`;
+const themeLists = Object.fromEntries(PAPERS.map((p) => [p.key, data[p.key].themes]));
+---
+<div id="bank">
+  <fieldset class="paper-switch">
+    <legend class="switch-label">Choose a paper</legend>
+    <div class="segmented" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+      {PAPERS.map((p) => (
+        <>
+          <input type="radio" name="paper" id={`paper-${p.key}`} value={p.key} checked={p.key === 'III'} />
+          <label for={`paper-${p.key}`}>{p.label}</label>
+        </>
+      ))}
+    </div>
+  </fieldset>
+
+  {panels.map((p) => (
+    <section class="panel" data-panel={p.key} hidden={p.key !== 'III'} aria-label={`${p.label} at a glance`}>
+      {p.counted ? (
+        <p class="summary">
+          {p.total} different questions have been set {p.slots} times across {p.sessions} exam sessions.
+          {' '}{p.repeated} of them have come back at least once, and between them they account for {p.repeatSlots} of the {p.slots}.
+        </p>
+      ) : (
+        <p class="summary">
+          {p.total} questions from the Paper II answer bank, across {p.themes.length} chapters.
+          {' '}The answer bank records repeats for {p.repeated} of them.
+        </p>
+      )}
+
+      <div class="charts">
+        {p.top.length > 0 && (
+          <figure class="chart chart-wide">
+            <figcaption>
+              <h2>The most repeated questions</h2>
+              <p class="hint">Tap a question to open it.</p>
+            </figcaption>
+            <ol class="top">
+              {p.top.map((q, i) => (
+                <li>
+                  <a href={url(questionPath(p.key, q.n))}>
+                    <span class="top-rank">{i + 1}</span>
+                    <span class="top-q">{q.q}</span>
+                    <span class="top-meta"><Tally n={q.x} /></span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </figure>
+        )}
+
+        <figure class="chart">
+          <figcaption>
+            <h2>How often questions come back</h2>
+            {p.counted
+              ? <p class="hint">Tap a bar to list those questions.</p>
+              : <p class="hint">Paper II’s answer bank records repeats for only {p.repeated} questions, so this chart covers Papers III and IV.</p>}
+          </figcaption>
+          {p.counted && (
+            <ul class="bars">
+              {p.buckets.map((b) => (
+                <li>
+                  <button type="button" class="bar-btn" data-repeat={b.key} aria-pressed="false">
+                    <span class="bar-name">{b.label}</span>
+                    <span class="bar-num">{b.count}</span>
+                    <span class="bar-line" aria-hidden="true"><span class="bar-fill" style={width(b.count, p.bucketMax)}></span></span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </figure>
+
+        <figure class="chart">
+          <figcaption>
+            <h2>{p.counted ? 'Which themes are asked most' : 'Questions per chapter'}</h2>
+            <p class="hint">{p.counted ? 'Times asked, by theme.' : 'Number of questions in each chapter.'} Tap one to list its questions.</p>
+          </figcaption>
+          <ul class="bars">
+            {p.themes.map((t) => (
+              <li>
+                <button type="button" class="bar-btn" data-theme={t.id} aria-pressed="false">
+                  <span class="bar-name">{t.name}</span>
+                  <span class="bar-num">{t.value}</span>
+                  <span class="bar-line" aria-hidden="true"><span class="bar-fill" style={width(t.value, p.themeMax)}></span></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </figure>
+      </div>
+    </section>
+  ))}
+
+  <section id="all-questions" class="list-section" aria-labelledby="all-heading">
+    <h2 id="all-heading">All questions</h2>
+    <p class="small muted stroke-key">
+      <svg width="12" height="20" viewBox="0 0 12 20" aria-hidden="true"><path d="M6 3 L6.5 17" /></svg>
+      Each red stroke is one time the question was set.
+    </p>
+
+    <form class="filters" id="filters" role="search">
+      <div class="wide">
+        <label class="field-label" for="q">Search questions</label>
+        <input class="input" id="q" name="q" type="search" placeholder="Try delirium or falls" autocomplete="off" />
+      </div>
+      <div>
+        <label class="field-label" for="theme">Theme</label>
+        <select class="input" id="theme" name="theme"><option value="all">All themes</option></select>
+      </div>
+      <div>
+        <label class="field-label" for="repeat">How often asked</label>
+        <select class="input" id="repeat" name="repeat">
+          <option value="">Any</option>
+          <option value="2plus">Asked more than once</option>
+          <option value="1">Asked once</option>
+          <option value="2">Asked twice</option>
+          <option value="3">Asked 3 times</option>
+          <option value="4">Asked 4 or more times</option>
+        </select>
+      </div>
+      <div class="wide">
+        <label class="field-label" for="sort">Sort by</label>
+        <select class="input" id="sort" name="sort">
+          <option value="asked">Most asked</option>
+          <option value="number">Question number</option>
+        </select>
+      </div>
+    </form>
+
+    <p class="notice small" id="paper-note" hidden>Paper II has no complete repeat record yet. Tallies appear where its answer bank notes a repeat, and the rest follow in chapter order.</p>
+
+    <div class="results-head">
+      <p id="count" aria-live="polite">{PAPERS.reduce((s, p) => s + data[p.key].questions.length, 0)} questions</p>
+      <button type="button" class="link-button" id="clear" hidden>Clear filters</button>
+    </div>
+    <ol class="qlist" id="list">
+      {PAPERS.flatMap((p) =>
+        data[p.key].questions.map((q) => (
+          <QuestionItem paper={p.key} q={q} data-paper={p.key} data-theme={q.t} data-x={q.x} data-n={q.n} data-text={q.q.toLowerCase()} />
+        )),
+      )}
+    </ol>
+    <p id="empty" class="notice" hidden>No questions match. Try a shorter word, or clear the filters.</p>
+  </section>
+
+  <script type="application/json" id="themes-data" set:html={JSON.stringify(themeLists)}></script>
+</div>
+
+<style>
+  .paper-switch { margin: 0 0 18px; padding: 0; border: 0; min-width: 0; }
+  .switch-label { padding: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600; }
+  .summary { margin: 0 0 20px; font-size: 17px; line-height: 1.55; }
+  .charts { display: grid; gap: 16px; margin-bottom: 40px; }
+  .chart { margin: 0; padding: 18px; background: var(--sheet); border: 1px solid var(--rule-strong); border-radius: 6px; }
+  .chart h2 { margin: 0 0 4px; font-size: 20px; line-height: 1.3; }
+  .hint { margin: 0 0 12px; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+  .bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .bar-btn {
+    width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: baseline;
+    padding: 8px 10px; font: inherit; text-align: left; color: var(--ink);
+    background: none; border: 1px solid transparent; border-radius: 6px; cursor: pointer;
+  }
+  .bar-btn:hover { background: var(--blue-wash); }
+  .bar-btn[aria-pressed='true'] { background: var(--blue-wash); border-color: var(--blue); }
+  .bar-name { font-size: 15px; line-height: 1.35; }
+  .bar-num { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .bar-line { grid-column: 1 / -1; display: block; height: 8px; background: var(--track); border-radius: 1px; }
+  .bar-fill { display: block; height: 8px; background: var(--blue); border-radius: 1px; }
+  .top { list-style: none; margin: 0; padding: 0; }
+  .top li + li { border-top: 1px solid var(--rule); }
+  .top a { display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; padding: 10px 0; color: var(--ink); text-decoration: none; }
+  .top a:hover .top-q { text-decoration: underline; text-decoration-color: var(--blue); }
+  .top-rank { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .top-q { font-size: 15px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .top-meta { grid-column: 2; }
+  .list-section { scroll-margin-top: 12px; }
+  @media (min-width: 760px) {
+    .charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .chart-wide { grid-column: 1 / -1; }
+  }
+</style>
+
+<script>
+  const root = document.getElementById('bank');
+  const form = document.getElementById('filters');
+  const list = document.getElementById('list');
+  const items = Array.from(list.children);
+  const themes = JSON.parse(document.getElementById('themes-data').textContent);
+  const search = document.getElementById('q');
+  const themeSelect = document.getElementById('theme');
+  const repeatSelect = document.getElementById('repeat');
+  const sortSelect = document.getElementById('sort');
+  const count = document.getElementById('count');
+  const clear = document.getElementById('clear');
+  const empty = document.getElementById('empty');
+  const note = document.getElementById('paper-note');
+  const panels = root.querySelectorAll('[data-panel]');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let paper = 'III';
+
+  function fillThemes() {
+    themeSelect.replaceChildren(new Option('All themes', 'all'));
+    for (const t of themes[paper]) themeSelect.add(new Option(t.name, String(t.id)));
+  }
+
+  function syncPressed() {
+    root.querySelectorAll('.bar-btn[data-theme]').forEach((b) =>
+      b.setAttribute('aria-pressed', String(b.dataset.theme === themeSelect.value)));
+    root.querySelectorAll('.bar-btn[data-repeat]').forEach((b) =>
+      b.setAttribute('aria-pressed', String(b.dataset.repeat === repeatSelect.value)));
+  }
+
+  function apply() {
+    const text = search.value.trim().toLowerCase();
+    const theme = themeSelect.value;
+    const repeat = repeatSelect.value;
+    const byAsked = sortSelect.value === 'asked';
+    const sorted = items.slice().sort((a, b) =>
+      byAsked
+        ? (+b.dataset.x || 0) - (+a.dataset.x || 0) || a.dataset.n - b.dataset.n
+        : a.dataset.n - b.dataset.n,
+    );
+    let shown = 0;
+    for (const li of sorted) {
+      const x = +li.dataset.x || 0;
+      const repeatOk = !repeat || (repeat === '2plus' ? x >= 2 : repeat === '4' ? x >= 4 : x === +repeat);
+      const match =
+        li.dataset.paper === paper &&
+        (theme === 'all' || li.dataset.theme === theme) &&
+        repeatOk &&
+        (!text || li.dataset.text.includes(text));
+      li.hidden = !match;
+      if (match) shown++;
+      list.appendChild(li);
+    }
+    const filtered = theme !== 'all' || text !== '' || repeat !== '';
+    count.textContent = filtered
+      ? `${shown} ${shown === 1 ? 'question' : 'questions'} found`
+      : `${shown} questions in Paper ${paper}`;
+    clear.hidden = !filtered;
+    empty.hidden = shown !== 0;
+    note.hidden = paper !== 'II';
+    panels.forEach((p) => { p.hidden = p.dataset.panel !== paper; });
+    syncPressed();
+  }
+
+  function showList() {
+    document.getElementById('all-questions').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  // Tapping a chart bar filters the list (tap again to undo).
+  root.addEventListener('click', (e) => {
+    const bar = e.target.closest('.bar-btn');
+    if (!bar) return;
+    let selected;
+    if (bar.dataset.theme) {
+      selected = themeSelect.value !== bar.dataset.theme;
+      themeSelect.value = selected ? bar.dataset.theme : 'all';
+    } else {
+      selected = repeatSelect.value !== bar.dataset.repeat;
+      repeatSelect.value = selected ? bar.dataset.repeat : '';
+    }
+    apply();
+    if (selected) showList();
+  });
+
+  root.querySelectorAll('input[name="paper"]').forEach((radio) =>
+    radio.addEventListener('change', () => {
+      paper = radio.value;
+      fillThemes();
+      repeatSelect.value = '';
+      apply();
+    }),
+  );
+
+  form.addEventListener('submit', (e) => e.preventDefault());
+  form.addEventListener('change', apply);
+  search.addEventListener('input', apply);
+  clear.addEventListener('click', () => {
+    search.value = '';
+    themeSelect.value = 'all';
+    repeatSelect.value = '';
+    apply();
+    search.focus();
+  });
+
+  // Links like /?paper=IV&q=falls&theme=3 open pre-filtered.
+  const params = new URLSearchParams(location.search);
+  if (['II', 'IV'].includes(params.get('paper'))) {
+    paper = params.get('paper');
+    document.getElementById(`paper-${paper}`).checked = true;
+  }
+  fillThemes();
+  if (params.get('theme')) themeSelect.value = params.get('theme');
+  if (params.get('q')) search.value = params.get('q');
+  apply();
+</script>

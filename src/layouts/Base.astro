@@ -6,7 +6,7 @@ import { url } from '../lib/url.js';
 const { title, description = SITE.description, current = '', noindex = false } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name}: ${SITE.tagline}`;
 const nav = [
-  { href: '/questions/', label: 'Questions', key: 'questions' },
+  { href: '/', label: 'Question bank', key: 'bank' },
   { href: '/essays/', label: 'Essays', key: 'essays' },
   { href: '/sunday-rounds/', label: 'Newsletter', key: 'newsletter' },
   { href: '/about/', label: 'About', key: 'about' },

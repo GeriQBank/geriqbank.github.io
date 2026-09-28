@@ -1,86 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
-import Tally from '../components/Tally.astro';
-import QuestionItem from '../components/QuestionItem.astro';
+import QuestionBank from '../components/QuestionBank.astro';
 import Subscribe from '../components/Subscribe.astro';
-import { SITE } from '../site.config.mjs';
-import { url } from '../lib/url.js';
-import data, { mostAsked, themeTotals, questionPath, themeName } from '../lib/qbank.js';
-import { essays } from '../lib/content.js';
+import data, { PAPERS } from '../lib/qbank.js';
 
-const [top, ...repeats] = mostAsked('III', 10);
-const themes = themeTotals('III');
-const maxTotal = themes[0].total;
-const firstThemes = themes.slice(0, 6);
-const moreThemes = themes.slice(6);
-const pct = (t) => `${Math.round((t.total / maxTotal) * 100)}%`;
+const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
 ---
-<Base current="home">
-  <section class="block">
-    <h1>{SITE.tagline}</h1>
-    <p class="lede">Free notes every Sunday on the questions that keep returning, and free model answers, added every week.</p>
-    <div class="actions">
-      <a class="button" href={SITE.newsletterUrl}>Subscribe to {SITE.newsletterName}</a>
-      <a class="button button-outline" href={url('/questions/')}>Browse the questions</a>
-    </div>
+<Base current="bank">
+  <section class="page-top">
+    <h1>MD Geriatrics question bank</h1>
+    <p class="lede">All {total} Paper II, III and IV questions, with the ones that keep coming back ranked first. Free for everyone.</p>
   </section>
-
-  <section class="block">
-    <h2>The question the examiner can’t stop asking</h2>
-    <article class="sheet">
-      <div class="sheet-meta"><span>Paper III, {themeName('III', top.t)}</span><span>{top.m}</span></div>
-      <p class="question-text"><span class="qnum">{top.n}.</span> {top.q}</p>
-      <p><Tally n={top.x} suffix=", more than any other Paper III question" /></p>
-      <a href={url(questionPath('III', top.n))}>Read the model answer</a>
-    </article>
-  </section>
-
-  <section class="block">
-    <h2>Questions that keep coming back</h2>
-    <p class="muted">The next most-asked questions in Paper III. If you prepare nothing else thoroughly, prepare these.</p>
-    <ol class="qlist">
-      {repeats.map((q) => <QuestionItem paper="III" q={q} />)}
-    </ol>
-    <p class="small muted" style="margin-top: 10px">Counted across 19 exam sessions, 2009 to 2025.</p>
-    <a href={url('/questions/')}>See all {data.III.questions.length} Paper III questions</a>
-  </section>
-
-  <section class="block">
-    <h2>Where the marks are</h2>
-    <p class="muted">Paper III’s questions grouped into {themes.length} themes. Longer bars mean more questions asked.</p>
-    <ul class="bars">
-      {firstThemes.map((t) => (
-        <li>
-          <div class="bar-head"><span>{t.name}</span><span class="bar-count">{t.total}</span></div>
-          <div class="bar-track"><div class="bar-fill" style={`width: ${pct(t)}`}></div></div>
-        </li>
-      ))}
-    </ul>
-    <details class="more">
-      <summary>Show all {themes.length} themes</summary>
-      <ul class="bars">
-        {moreThemes.map((t) => (
-          <li>
-            <div class="bar-head"><span>{t.name}</span><span class="bar-count">{t.total}</span></div>
-            <div class="bar-track"><div class="bar-fill" style={`width: ${pct(t)}`}></div></div>
-          </li>
-        ))}
-      </ul>
-    </details>
-  </section>
-
-  {essays.length > 0 && (
-    <section class="block">
-      <h2>Essays</h2>
-      {essays.slice(0, 3).map((e) => (
-        <article style="padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--rule)">
-          <h3><a href={url(`/essays/${e.slug}/`)} style="color: var(--ink)">{e.frontmatter.title}</a></h3>
-          <p class="muted">{e.frontmatter.description}</p>
-          <a href={url(`/essays/${e.slug}/`)}>Read the essay</a>
-        </article>
-      ))}
-    </section>
-  )}
-
+  <QuestionBank />
   <Subscribe />
 </Base>
