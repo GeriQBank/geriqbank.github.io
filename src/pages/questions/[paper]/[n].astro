@@ -1,11 +1,11 @@
 ---
-// One page per question: 355 pages generated from the question bank.
+// One page per question, generated from the question bank.
 // If src/content/answers/p3-135.md exists, its answer appears here.
 import Base from '../../../layouts/Base.astro';
 import Tally from '../../../components/Tally.astro';
 import QuestionItem from '../../../components/QuestionItem.astro';
 import Subscribe from '../../../components/Subscribe.astro';
-import data, { PAPERS, paperBySlug, themeName, answerKey } from '../../../lib/qbank.js';
+import data, { PAPERS, paperBySlug, themeName, answerKey, timesLabel } from '../../../lib/qbank.js';
 import { answers } from '../../../lib/content.js';
 import { url } from '../../../lib/url.js';
 import { SITE } from '../../../site.config.mjs';
@@ -24,10 +24,12 @@ const Content = answer?.Content;
 const fm = answer?.frontmatter ?? {};
 const related = data[paper.key].questions
   .filter((x) => x.t === q.t && x.n !== q.n)
-  .sort((a, b) => b.x - a.x || a.n - b.n)
+  .sort((a, b) => (b.x || 0) - (a.x || 0) || a.n - b.n)
   .slice(0, 5);
 const heading = fm.title ?? `${paper.label}, question ${q.n}`;
-const description = `${paper.label} question ${q.n} (${q.m}, ${q.x === 1 ? 'asked once' : `asked ${q.x} times`}): ${q.q}`.slice(0, 160);
+const facts = [q.m, timesLabel(q.x)].filter(Boolean).join(', ');
+const description = `${paper.label} question ${q.n}${facts ? ` (${facts})` : ''}: ${q.q}`.slice(0, 160);
+const source = paper.key === 'II' ? 'From the Paper II answer bank' : 'As set in the paper';
 ---
 <Base title={heading} current="questions" description={description} noindex={!answer}>
   <a class="back" href={url('/questions/')}>
@@ -39,9 +41,9 @@ const description = `${paper.label} question ${q.n} (${q.m}, ${q.x === 1 ? 'aske
     <p class="small muted" style="margin: 8px 0 6px">{paper.label}, {theme}</p>
     <h1>{heading}</h1>
     <div class="sheet" style="margin-bottom: 28px">
-      <div class="sheet-meta"><span>As set in the paper</span><span>{q.m}</span></div>
+      <div class="sheet-meta"><span>{source}</span><span>{q.m}</span></div>
       <p class="question-text"><span class="qnum">{q.n}.</span> {q.q}</p>
-      <Tally n={q.x} />
+      {q.x && <Tally n={q.x} />}
     </div>
 
     {Content ? (

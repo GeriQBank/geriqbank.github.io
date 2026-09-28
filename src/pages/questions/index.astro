@@ -3,17 +3,17 @@ import Base from '../../layouts/Base.astro';
 import QuestionItem from '../../components/QuestionItem.astro';
 import data, { PAPERS } from '../../lib/qbank.js';
 
-const themes = { III: data.III.themes, IV: data.IV.themes };
+const themes = Object.fromEntries(PAPERS.map((p) => [p.key, data[p.key].themes]));
 const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
 ---
 <Base
   title="Question index"
   current="questions"
-  description={`All ${total} MD Geriatrics Paper III and IV questions, ranked by how often each has been set.`}
+  description={`All ${total} MD Geriatrics Paper II, III and IV questions, with Papers III and IV ranked by how often each has been set.`}
 >
   <section class="page-top">
     <h1>Question index</h1>
-    <p class="lede">Every Paper III and IV question, de-duplicated and ranked by how often it has been set.</p>
+    <p class="lede">Every Paper II, III and IV question. Papers III and IV are de-duplicated and ranked by how often each question has been set.</p>
     <p class="small muted stroke-key">
       <svg width="12" height="20" viewBox="0 0 12 20" aria-hidden="true"><path d="M6 3 L6.5 17" /></svg>
       Each red stroke is one time the question was set.
@@ -23,7 +23,9 @@ const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
   <form class="filters" id="filters" role="search">
     <fieldset class="wide">
       <legend>Paper</legend>
-      <div class="segmented">
+      <div class="segmented" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+        <input type="radio" name="paper" id="paper-II" value="II" />
+        <label for="paper-II">Paper II</label>
         <input type="radio" name="paper" id="paper-III" value="III" checked />
         <label for="paper-III">Paper III</label>
         <input type="radio" name="paper" id="paper-IV" value="IV" />
@@ -46,6 +48,8 @@ const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
       </select>
     </div>
   </form>
+
+  <p class="notice small" id="paper-note" hidden>Paper II has no complete repeat record yet. Tallies appear where its answer bank notes a repeat, and the rest follow in chapter order.</p>
 
   <div class="results-head">
     <p id="count" aria-live="polite">{total} questions</p>
@@ -72,6 +76,7 @@ const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
     const count = document.getElementById('count');
     const clear = document.getElementById('clear');
     const empty = document.getElementById('empty');
+    const note = document.getElementById('paper-note');
     let paper = 'III';
 
     function fillThemes() {
@@ -85,7 +90,7 @@ const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
       const byAsked = sortSelect.value === 'asked';
       const sorted = items.slice().sort((a, b) =>
         byAsked
-          ? b.dataset.x - a.dataset.x || a.dataset.n - b.dataset.n
+          ? (+b.dataset.x || 0) - (+a.dataset.x || 0) || a.dataset.n - b.dataset.n
           : a.dataset.n - b.dataset.n,
       );
       let shown = 0;
@@ -104,6 +109,7 @@ const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
         : `${shown} questions in Paper ${paper}`;
       clear.hidden = !filtered;
       empty.hidden = shown !== 0;
+      note.hidden = paper !== 'II';
     }
 
     form.addEventListener('submit', (e) => e.preventDefault());
@@ -124,9 +130,9 @@ const total = PAPERS.reduce((sum, p) => sum + data[p.key].questions.length, 0);
 
     // Links like /questions/?paper=IV&q=falls open pre-filtered.
     const params = new URLSearchParams(location.search);
-    if (params.get('paper') === 'IV') {
-      paper = 'IV';
-      document.getElementById('paper-IV').checked = true;
+    if (['II', 'IV'].includes(params.get('paper'))) {
+      paper = params.get('paper');
+      document.getElementById(`paper-${paper}`).checked = true;
     }
     if (params.get('q')) search.value = params.get('q');
     fillThemes();

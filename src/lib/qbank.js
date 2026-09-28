@@ -1,11 +1,13 @@
-// The question bank: every Paper III and IV question, de-duplicated,
-// with how many times it has been set (x), its mark format (m) and theme (t).
+// The question bank: every Paper II, III and IV question, with how many times
+// it has been set (x, or null where no count exists), its mark format (m) and theme (t).
+import paper2 from '../data/qbank-ii.json';
 import paper3 from '../data/qbank-iii.json';
 import paper4 from '../data/qbank-iv.json';
 
-const data = { III: paper3, IV: paper4 };
+const data = { II: paper2, III: paper3, IV: paper4 };
 
 export const PAPERS = [
+  { key: 'II', slug: 'paper-2', label: 'Paper II' },
   { key: 'III', slug: 'paper-3', label: 'Paper III' },
   { key: 'IV', slug: 'paper-4', label: 'Paper IV' },
 ];
@@ -20,10 +22,11 @@ export function themeName(key, id) {
 
 export const questionPath = (key, n) => `/questions/${paperByKey(key).slug}/${n}/`;
 
-// Answer files are named p3-135.md (Paper III, question 135) or p4-20.md.
-export const answerKey = (key, n) => `p${key === 'III' ? 3 : 4}-${n}`;
+// Answer files are named p2-17.md, p3-135.md (Paper III, question 135) or p4-20.md.
+const PAPER_NUMBER = { II: 2, III: 3, IV: 4 };
+export const answerKey = (key, n) => `p${PAPER_NUMBER[key]}-${n}`;
 
-export const timesLabel = (x) => (x === 1 ? 'asked once' : `asked ${x} times`);
+export const timesLabel = (x) => (!x ? '' : x === 1 ? 'asked once' : `asked ${x} times`);
 
 // Tally marks: four strokes, then a diagonal for the fifth, in groups of five.
 export function tally(n) {
@@ -45,13 +48,13 @@ export function tally(n) {
 // Themes with the total number of times their questions were set, largest first.
 export function themeTotals(key) {
   const totals = new Map();
-  for (const q of data[key].questions) totals.set(q.t, (totals.get(q.t) || 0) + q.x);
+  for (const q of data[key].questions) totals.set(q.t, (totals.get(q.t) || 0) + (q.x || 0));
   return data[key].themes
     .map((t) => ({ ...t, total: totals.get(t.id) || 0 }))
     .sort((a, b) => b.total - a.total || a.id - b.id);
 }
 
 export const mostAsked = (key, limit) =>
-  [...data[key].questions].sort((a, b) => b.x - a.x || a.n - b.n).slice(0, limit);
+  [...data[key].questions].sort((a, b) => (b.x || 0) - (a.x || 0) || a.n - b.n).slice(0, limit);
 
 export default data;

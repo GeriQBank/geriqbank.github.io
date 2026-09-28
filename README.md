@@ -1,7 +1,7 @@
 # Silver Street: free MD Geriatrics exam prep
 
-A free website that ranks every MD Geriatrics Paper III and IV question by how
-often it has been set, with model answers, essays and a weekly newsletter.
+A free website listing every MD Geriatrics Paper II, III and IV question, ranked by
+how often it has been set, with model answers, essays and a weekly newsletter.
 "Silver Street" is a placeholder name. Change it in `src/site.config.mjs`.
 
 - **Live site:** https://sudarsandr36-del.github.io/silver-street/
@@ -57,7 +57,7 @@ as further reading, but don't copy their sentences, tables or figures.
 
 ```
 src/site.config.mjs     your name, links, preview mode
-src/data/               all 355 questions (qbank-iii.json, qbank-iv.json)
+src/data/               all 600 questions (qbank-ii/iii/iv.json)
 src/content/answers/    one Markdown file per model answer
 src/content/essays/     essays
 src/content/issues/     Sunday Rounds issues
@@ -74,4 +74,5 @@ npm run dev       # local preview at http://localhost:4321/silver-street/
 npm run build     # full build including the search index
 ```
 
-Paper II has answers but no question-frequency data yet, so it isn't in the index.
+Paper II comes from its answer bank, which records repeats for only some questions,
+so most Paper II questions show no tally yet.

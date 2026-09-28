@@ -5,7 +5,7 @@ export const SITE = {
   name: 'Silver Street', // placeholder name: change it everywhere by changing it here
   tagline: 'MD Geriatrics exam questions, ranked by how often they come back.',
   description:
-    'Free revision for MD Geriatric Medicine: every Paper III and IV question ranked by how often it has been set, with model answers.',
+    'Free revision for MD Geriatric Medicine: every Paper II, III and IV question, the most-repeated ranked first, with model answers.',
   author: '[YOUR NAME]',
   authorRole: 'MD Geriatric Medicine resident',
   reviewer: '[REVIEWER NAME AND ROLE]',
