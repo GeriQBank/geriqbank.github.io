@@ -1,10 +1,54 @@
 // The question bank: every Paper II, III and IV question, with how many times
 // it has been set (x, or null where no count exists), its mark format (m) and theme (t).
+//
+// Each file in src/data/sessions/ adds one later exam on top of the base banks.
+// A repeat gets one more tally stroke, plus the session (s), its mark format that
+// time (sm) and its wording that time (w). A new question joins the end of its
+// paper's list, so existing question numbers and web addresses never change.
 import paper2 from '../data/qbank-ii.json';
 import paper3 from '../data/qbank-iii.json';
 import paper4 from '../data/qbank-iv.json';
 
-const data = { II: paper2, III: paper3, IV: paper4 };
+const data = { II: structuredClone(paper2), III: structuredClone(paper3), IV: structuredClone(paper4) };
+
+// Exam sessions in the original Paper III and IV banks (from their covers).
+const BASE_SESSIONS = { III: 19, IV: 20 };
+
+const sessions = Object.values(import.meta.glob('../data/sessions/*.json', { eager: true, import: 'default' }))
+  .sort((a, b) => a.session.localeCompare(b.session));
+
+for (const s of sessions) {
+  for (const [key, changes] of Object.entries(s.papers)) {
+    const questions = data[key].questions;
+    for (const r of changes.repeats ?? []) {
+      const q = questions.find((x) => x.n === r.n);
+      if (!q) throw new Error(`Session ${s.session}: Paper ${key} has no question ${r.n}`);
+      // A Paper II question without a count was still set at least once before.
+      q.x = (q.x || 1) + 1;
+      Object.assign(q, { s: s.session, sm: r.m, w: r.w });
+    }
+    let next = Math.max(...questions.map((x) => x.n)) + 1;
+    for (const add of changes.new ?? []) {
+      // Paper II has no complete repeat record, so its new questions start without a count.
+      questions.push({ n: next++, q: add.q, x: key === 'II' ? null : 1, m: add.m, t: add.t, s: s.session, added: true });
+    }
+  }
+}
+
+const LABELS = Object.fromEntries(sessions.map((s) => [s.session, s.label]));
+
+// "September 2026", or "Sep 2026" when short.
+export function sessionLabel(id, short = false) {
+  const label = LABELS[id] ?? id;
+  return short ? label.replace(/^(\w{3})\w*/, '$1') : label;
+}
+
+// The most recent exam added, or null if there are no session files.
+export const LATEST = sessions.length ? { id: sessions.at(-1).session, label: sessions.at(-1).label } : null;
+
+// How many exam sessions a paper's counts cover (null for Paper II, which has no complete record).
+export const sessionCount = (key) =>
+  key in BASE_SESSIONS ? BASE_SESSIONS[key] + sessions.filter((s) => key in s.papers).length : null;
 
 export const PAPERS = [
   { key: 'II', slug: 'paper-2', label: 'Paper II' },

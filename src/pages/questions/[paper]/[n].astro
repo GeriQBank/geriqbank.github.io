@@ -5,7 +5,7 @@ import Base from '../../../layouts/Base.astro';
 import Tally from '../../../components/Tally.astro';
 import QuestionItem from '../../../components/QuestionItem.astro';
 import Subscribe from '../../../components/Subscribe.astro';
-import data, { PAPERS, paperBySlug, themeName, answerKey, timesLabel } from '../../../lib/qbank.js';
+import data, { PAPERS, paperBySlug, themeName, answerKey, timesLabel, sessionLabel } from '../../../lib/qbank.js';
 import { answers } from '../../../lib/content.js';
 import { url } from '../../../lib/url.js';
 import { SITE } from '../../../site.config.mjs';
@@ -29,7 +29,12 @@ const related = data[paper.key].questions
 const heading = fm.title ?? `${paper.label}, question ${q.n}`;
 const facts = [q.m, timesLabel(q.x)].filter(Boolean).join(', ');
 const description = `${paper.label} question ${q.n}${facts ? ` (${facts})` : ''}: ${q.q}`.slice(0, 160);
-const source = paper.key === 'II' ? 'From the Paper II answer bank' : 'As set in the paper';
+// Paper II's original questions come from its answer bank; questions added from a later exam are as set.
+const source = paper.key === 'II' && !q.added ? 'From the Paper II answer bank' : 'As set in the paper';
+// For a repeat from a later exam, show how it was set that time.
+const sessionNote = q.s
+  ? `Set in ${sessionLabel(q.s)}${q.sm ? `, as a ${q.sm}` : ''}${q.w ? `: “${q.w}”` : '.'}`
+  : '';
 const reviewer = fm.reviewedBy ?? SITE.reviewer;
 const rawDate = fm.lastReviewed instanceof Date ? fm.lastReviewed.toISOString().slice(0, 10) : String(fm.lastReviewed ?? '');
 const reviewDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
@@ -50,6 +55,7 @@ const reviewed = reviewDate ? `Last reviewed ${reviewDate} by ${reviewer}.` : `A
       <div class="sheet-meta"><span>{source}</span><span>{q.m}</span></div>
       <p class="question-text"><span class="qnum">{q.n}.</span> {q.q}</p>
       {q.x && <Tally n={q.x} />}
+      {sessionNote && <p class="small muted" style="margin: 10px 0 0">{sessionNote}</p>}
     </div>
 
     {Content ? (

@@ -39,6 +39,20 @@ from Google until the answer exists.
 **Add an essay or newsletter issue:** the same way, in `src/content/essays` or
 `src/content/issues` (give each issue the next `number`).
 
+**Add a new exam's papers:** each exam gets one small file in `src/data/sessions/`.
+1. Copy `src/data/sessions/2026-09.json` to a new file named after the exam month,
+   such as `2027-03.json`, and change `session` and `label` (`"2027-03"`, `"March 2027"`).
+2. For each paper, list questions set before under `repeats`, with the question
+   number (`n`), the mark format that time (`m`) and the wording that time (`w`).
+3. List questions never set before under `new`, with the question (`q`), mark
+   format (`m`) and theme number (`t`). Theme numbers are in the `themes` list at
+   the top of each `src/data/qbank-*.json` file.
+4. Commit. Repeats gain a tally stroke, new questions join the end of each paper's
+   list (existing numbers never change), and the home page offers the new exam
+   as a filter.
+
+Or send Claude photos of the papers, which is how September 2026 was added.
+
 **Write every answer in your own words.** Name textbooks such as Pathy and Kane
 as further reading, but don't copy their sentences, tables or figures.
 
@@ -62,7 +76,8 @@ as further reading, but don't copy their sentences, tables or figures.
 
 ```
 src/site.config.mjs     your name, links, preview mode
-src/data/               all 600 questions (qbank-ii/iii/iv.json)
+src/data/               the question banks (qbank-ii/iii/iv.json)
+src/data/sessions/      one file per later exam, such as 2026-09.json
 src/content/answers/    one Markdown file per model answer
 src/content/essays/     essays
 src/content/issues/     Sunday Rounds issues
@@ -79,5 +94,5 @@ npm run dev       # local preview at http://localhost:4321/silver-street/
 npm run build     # full build including the search index
 ```
 
-Paper II comes from its answer bank, which records repeats for only some questions,
-so most Paper II questions show no tally yet.
+Paper II comes from its answer bank plus later exams. Repeats are recorded for only
+some of its questions, so most Paper II questions show no tally yet.

@@ -1,8 +1,9 @@
 ---
-// One row in a question list: the question, its tally, its mark format.
+// One row in a question list: the question, its tally, its mark format,
+// and a tag if it was set in a recent exam added from src/data/sessions/.
 import Tally from './Tally.astro';
 import { url } from '../lib/url.js';
-import { questionPath, answerKey } from '../lib/qbank.js';
+import { questionPath, answerKey, sessionLabel } from '../lib/qbank.js';
 import { answers } from '../lib/content.js';
 
 const { paper, q, ...rest } = Astro.props;
@@ -14,9 +15,24 @@ const ready = Boolean(answers[answerKey(paper, q.n)]);
     <span class="qrow-meta">
       {q.x ? <Tally n={q.x} /> : <span></span>}
       <span class="qrow-right">
+        {q.s && <span class="session" title={`Set in ${sessionLabel(q.s)}`}>{sessionLabel(q.s, true)}</span>}
         {ready && <span class="ready">Answer ready</span>}
         <span>{q.m}</span>
       </span>
     </span>
   </a>
 </li>
+
+<style>
+  /* Let the tags wrap on narrow phones instead of pushing past the edge. */
+  .qrow-right { flex-wrap: wrap; justify-content: flex-end; row-gap: 4px; flex-shrink: 1; }
+  .qrow-right > * { white-space: nowrap; }
+  .session {
+    padding: 0 6px;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--ink-2);
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+  }
+</style>

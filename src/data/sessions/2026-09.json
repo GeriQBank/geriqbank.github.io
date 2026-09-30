@@ -1,0 +1,60 @@
+{
+  "session": "2026-09",
+  "label": "September 2026",
+  "papers": {
+    "II": {
+      "repeats": [
+        { "n": 142, "m": "15-mark essay", "w": "A 75-year-old man comes to the emergency department with a sudden onset of palpitation and giddiness. Electrocardiogram showed a rate of 150/minute. Discuss the approach to tachyarrhythmias, their ECG features and management." },
+        { "n": 90, "m": "15-mark essay", "w": "Write in detail about chronic kidney disease, its aetiology, stages and its management." },
+        { "n": 87, "m": "7-mark note", "w": "Hypercalcaemia of malignancy." },
+        { "n": 217, "m": "7-mark note", "w": "Approach to fever of unknown origin." },
+        { "n": 157, "m": "7-mark note", "w": "Types of inhalers." }
+      ],
+      "new": [
+        { "q": "Management of dyslipidaemia", "m": "7-mark note", "t": 5 },
+        { "q": "Extrapulmonary tuberculosis", "m": "7-mark note", "t": 9 },
+        { "q": "Bone marrow aspiration", "m": "7-mark note", "t": 1 },
+        { "q": "Incretins", "m": "7-mark note", "t": 4 },
+        { "q": "Selective serotonin reuptake inhibitors", "m": "7-mark note", "t": 3 },
+        { "q": "Assessment of cognition — common scales used, their pros and cons", "m": "7-mark note", "t": 7 },
+        { "q": "Functional dyspepsia", "m": "7-mark note", "t": 1 }
+      ]
+    },
+    "III": {
+      "repeats": [
+        { "n": 60, "m": "15-mark essay", "w": "Discuss the guideline-directed medical therapy for heart failure, with its limitations of use in the elderly population." },
+        { "n": 6, "m": "7-mark note", "w": "Sarcopenia — its evaluation and management." },
+        { "n": 161, "m": "7-mark note", "w": "Insomnia in the elderly." },
+        { "n": 151, "m": "7-mark note", "w": "An 80-year-old, Mr X, wants your guidance regarding routine cancer screening because he is apprehensive of being diagnosed with cancer too late. What will be your advice?" },
+        { "n": 173, "m": "7-mark note", "w": "Write a note on the advantages of using comprehensive geriatric assessment before elective surgery in the elderly." },
+        { "n": 110, "m": "7-mark note", "w": "Management of osteoporosis." },
+        { "n": 30, "m": "7-mark note", "w": "Minimal cognitive impairment." },
+        { "n": 119, "m": "7-mark note", "w": "Polymyalgia rheumatica — presentation, diagnosis and management." }
+      ],
+      "new": [
+        { "q": "An 80-year-old female is brought to you with complaints of unintentional weight loss over the past 3 months. Discuss the causes, evaluation and management of this condition.", "m": "15-mark essay", "t": 12 },
+        { "q": "Drug-induced delirium.", "m": "7-mark note", "t": 3 },
+        { "q": "Tools to identify inappropriate prescriptions.", "m": "7-mark note", "t": 16 },
+        { "q": "A 75-year-old patient with moderate frailty is brought to you by his daughter, who says he is non-compliant with the dietary advice prescribed for his diabetes and hypertension. How will you approach this scenario?", "m": "7-mark note", "t": 1 }
+      ]
+    },
+    "IV": {
+      "repeats": [
+        { "n": 9, "m": "15-mark essay", "w": "Discuss the various methods to promote healthy ageing, with a special note on vaccination in the elderly." },
+        { "n": 74, "m": "15-mark essay", "w": "Discuss the aetiology, pathogenesis, clinical features and management of osteoarthritis." },
+        { "n": 65, "m": "7-mark note", "w": "Fall prevention." },
+        { "n": 57, "m": "7-mark note", "w": "Assistive devices for mobility." },
+        { "n": 37, "m": "7-mark note", "w": "Advance directives." },
+        { "n": 104, "m": "7-mark note", "w": "Recent therapies for parkinsonism." }
+      ],
+      "new": [
+        { "q": "Cardiac rehabilitation.", "m": "7-mark note", "t": 5 },
+        { "q": "Cognitive behavioural therapy for insomnia.", "m": "7-mark note", "t": 9 },
+        { "q": "Glucagon-like peptide-1 receptor agonists.", "m": "7-mark note", "t": 14 },
+        { "q": "Low back ache in the elderly — its causes and management.", "m": "7-mark note", "t": 7 },
+        { "q": "Behavioural disorders in dementia — evaluation and management.", "m": "7-mark note", "t": 9 },
+        { "q": "Role of palliative therapy in end-stage kidney disease.", "m": "7-mark note", "t": 4 }
+      ]
+    }
+  }
+}
