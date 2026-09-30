@@ -62,8 +62,8 @@ const reviewed = reviewDate ? `Last reviewed ${reviewDate} by ${reviewer}.` : `A
       </div>
     ) : (
       <div class="notice">
-        <p><strong>No model answer yet.</strong> New answers are added every week, most-asked questions first.</p>
-        <p>Subscribe to {SITE.newsletterName} to hear when this one is published.</p>
+        <p><strong>No model answer yet.</strong> New answers are added regularly, most-asked questions first.</p>
+        {SITE.newsletterUrl && <p>Subscribe to {SITE.newsletterName} to hear when this one is published.</p>}
       </div>
     )}
   </article>

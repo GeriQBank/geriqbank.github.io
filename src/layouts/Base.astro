@@ -5,6 +5,8 @@ import { url } from '../lib/url.js';
 
 const { title, description = SITE.description, current = '', noindex = false } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name}: ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(url('/og-image.png'), Astro.site).href;
 const nav = [
   { href: '/', label: 'Question bank', key: 'bank' },
   { href: '/essays/', label: 'Essays', key: 'essays' },
@@ -20,8 +22,20 @@ const nav = [
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   {(noindex || SITE.preview) && <meta name="robots" content="noindex" />}
+  <link rel="canonical" href={canonical} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={SITE.name} />
+  <meta property="og:url" content={canonical} />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="800" />
+  <meta property="og:image:height" content="420" />
+  <meta property="og:image:alt" content={`${SITE.name}: MD Geriatrics question bank`} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content={ogImage} />
+  {SITE.googleSiteVerification && <meta name="google-site-verification" content={SITE.googleSiteVerification} />}
+  <link rel="sitemap" href={url('/sitemap.xml')} />
   <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,7 +53,7 @@ const nav = [
         <a class="icon-link" href={url('/search/')} aria-label="Search">
           <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5" /><path d="M14.5 14.5 L20 20" /></svg>
         </a>
-        <a class="button button-outline button-small" href={SITE.newsletterUrl}>Subscribe</a>
+        {SITE.newsletterUrl && <a class="button button-outline button-small" href={SITE.newsletterUrl}>Subscribe</a>}
       </div>
     </div>
     <nav class="site-nav" aria-label="Sections">

@@ -6,8 +6,10 @@ const {
   text = 'One question that keeps coming back, a skeleton to answer it, and one guideline change worth knowing. Free.',
 } = Astro.props;
 ---
-<section class="box" id="subscribe">
-  <h2>{heading}</h2>
-  <p class="muted">{text}</p>
-  <a class="button" href={SITE.newsletterUrl}>Subscribe free</a>
-</section>
+{SITE.newsletterUrl && (
+  <section class="box" id="subscribe">
+    <h2>{heading}</h2>
+    <p class="muted">{text}</p>
+    <a class="button" href={SITE.newsletterUrl}>Subscribe free</a>
+  </section>
+)}

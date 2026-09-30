@@ -21,6 +21,6 @@ import { url } from '../lib/url.js';
     <p>Please <a href={SITE.reportErrorUrl}>report it</a>. Corrections are made as quickly as possible, and people who report errors can be thanked by name if they wish.</p>
 
     <h2>Free to read</h2>
-    <p>Everything on this site is free. The best way to support it is to share it with the next batch of residents, or to <a href={url('/sunday-rounds/')}>subscribe to {SITE.newsletterName}</a>.</p>
+    <p>Everything on this site is free. The best way to support it is to share it with the next batch of residents{SITE.newsletterUrl && <>, or to <a href={url('/sunday-rounds/')}>subscribe to {SITE.newsletterName}</a></>}.</p>
   </article>
 </Base>

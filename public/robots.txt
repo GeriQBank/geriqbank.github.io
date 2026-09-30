@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://sudarsandr36-del.github.io/silver-street/sitemap.xml
