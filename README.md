@@ -1,4 +1,4 @@
-# Silver Street: free MD Geriatrics exam prep
+# GeriQBank: free MD Geriatrics exam prep
 
 A free website listing every MD Geriatrics Paper II, III and IV question, ranked by
 how often it has been set, with model answers, essays and a weekly newsletter.
@@ -65,8 +65,8 @@ as further reading, but don't copy their sentences, tables or figures.
 ## Using your own domain later
 
 1. Buy the domain from any registrar.
-2. Add a file `public/CNAME` containing only the domain, such as `silverstreet.in`.
-3. In `astro.config.mjs`, set `CUSTOM_DOMAIN` to your domain, such as `'silverstreet.in'`,
+2. Add a file `public/CNAME` containing only the domain, such as `geriqbank.in`.
+3. In `astro.config.mjs`, set `CUSTOM_DOMAIN` to your domain, such as `'geriqbank.in'`,
    and update the Sitemap line in `public/robots.txt`.
 4. Point the domain's DNS at GitHub Pages (search GitHub's guide
    "Managing a custom domain for your GitHub Pages site").
