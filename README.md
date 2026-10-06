@@ -4,7 +4,7 @@ A free website listing every MD Geriatrics Paper II, III and IV question, ranked
 how often it has been set, with model answers, essays and a weekly newsletter.
 The site's name is set in `src/site.config.mjs`.
 
-- **Live site:** https://sudarsandr36-del.github.io/silver-street/
+- **Live site:** https://geriqbank.github.io/
 - **Publishing:** automatic. Every change saved to this repository rebuilds the
   site in about two minutes. The **Actions** tab shows each build; a green tick
   means it's live, and a red cross means something needs fixing.
@@ -90,7 +90,7 @@ docs/                   the answer template
 
 ```bash
 npm install
-npm run dev       # local preview at http://localhost:4321/silver-street/
+npm run dev       # local preview at http://localhost:4321/
 npm run build     # full build including the search index
 ```
 
