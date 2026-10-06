@@ -16,5 +16,5 @@ export const SITE = {
   // Where readers report mistakes: a Google Form link or a mailto: address.
   reportErrorUrl: 'mailto:sudarsandr36@gmail.com?subject=GeriQBank%20error%20report',
   // Google Search Console: paste the content="..." code from its HTML tag method here.
-  googleSiteVerification: '',
+  googleSiteVerification: 'ptINjCsjsqfbDdtHc7ztf-fclyiL15HLJUlNXq-UP9s',
 };
